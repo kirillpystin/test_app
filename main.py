@@ -1,6 +1,7 @@
 from os import environ
 
 import uvicorn
+
 from app import app
 
 # Для разработки из-под виртуального окружения или запуска локально.

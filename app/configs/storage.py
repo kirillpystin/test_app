@@ -1,6 +1,6 @@
 """Конфигурация для хранилища"""
-from threading import Lock
+import asyncio
 
 store = {}
-store_lock = Lock()
+store_lock = asyncio.Lock()
 file_path = "store.json"

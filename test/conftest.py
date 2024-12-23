@@ -1,15 +1,11 @@
 import os
 
 import pytest
-from fastapi.testclient import TestClient
 
-from app import app
 from app.configs.storage import file_path, store
 
-client = TestClient(app)
 
-
-@pytest.fixture(scope="function")
+@pytest.fixture(autouse=True)
 def setup_and_teardown():
     store.clear()
     if os.path.exists(file_path):

@@ -9,7 +9,7 @@ async def cleanup_expired_items() -> None:
     """Очистка хранилища по TTL"""
     while True:
         now: float = time.time()
-        with store_lock:
+        async with store_lock:
             keys_to_delete: list[str] = [
                 key
                 for key, item in store.items()
@@ -17,17 +17,17 @@ async def cleanup_expired_items() -> None:
             ]
             for key in keys_to_delete:
                 del store[key]
-        save_store_to_file()
+            await save_store_to_file()
         await asyncio.sleep(10)
 
 
-def load_store_from_file() -> None:
+async def load_store_from_file() -> None:
     """Загрузка из файла"""
     try:
         with open(file_path, "r") as f:
             data: dict = json.load(f)
             now: float = time.time()
-            with store_lock:
+            async with store_lock:
                 for key, item in data.items():
                     if not item["expiration"] or item["expiration"] > now:
                         store[key] = item
@@ -35,8 +35,7 @@ def load_store_from_file() -> None:
         pass
 
 
-def save_store_to_file() -> None:
+async def save_store_to_file() -> None:
     """Сохранение в файл"""
-    with store_lock:
-        with open(file_path, "w") as f:
-            json.dump(store, f)
+    with open(file_path, "w") as f:
+        json.dump(store, f)
